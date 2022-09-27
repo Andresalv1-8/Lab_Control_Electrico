@@ -22,7 +22,7 @@ int old_valL = 0;
 int estado_giro = 0;//0 R, 1 L
 
    //Variables de tiempo para cambio de estado
-long intervaloPaso1 = (500/pulsos);
+long intervaloPaso1 = (1000/pulsos);
 long intervaloPaso2;
 long intervaloPaso3;
 long intervaloPaso4;
@@ -279,7 +279,7 @@ void controladorEstds() //Función que controla el cambio de estado
   {
     previusmsPaso1 = currentMillis;
     estadoActual = Paso1;
-    intervaloPaso2 = (500/pulses) + (intervaloPaso1);
+    intervaloPaso2 = (1000/pulses) + (intervaloPaso1);
    
   }
   
@@ -287,7 +287,7 @@ void controladorEstds() //Función que controla el cambio de estado
   {
     previusmsPaso2 = currentMillis;
     estadoActual = Paso2;
-    intervaloPaso3 = (500/pulses) + (intervaloPaso2);
+    intervaloPaso3 = (1000/pulses) + (intervaloPaso2);
     
   }
   
@@ -295,7 +295,7 @@ void controladorEstds() //Función que controla el cambio de estado
   {
     previusmsPaso3 = currentMillis;
     estadoActual = Paso3;
-    intervaloPaso4 = (500/pulses) + (intervaloPaso3);
+    intervaloPaso4 = (1000/pulses) + (intervaloPaso3);
     
   }
   
@@ -303,7 +303,7 @@ void controladorEstds() //Función que controla el cambio de estado
   {
     previusmsPaso4 = currentMillis;
     estadoActual = Paso4;
-    intervaloPaso1 = (500/pulses) + (intervaloPaso4);
+    intervaloPaso1 = (1000/pulses) + (intervaloPaso4);
     //Serial.println("paso4");
   }
 }

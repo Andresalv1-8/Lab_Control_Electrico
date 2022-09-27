@@ -6,7 +6,8 @@
 LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 
 int pulsos = 2;
-int pulses = 0;
+int pulses=0;
+
 bool select = 0; //1 RUN, 0 STOP;
 int vals = 0;
 int old_vals = 0;
@@ -22,14 +23,8 @@ int old_valL = 0;
 int estado_giro = 0;//0 R, 1 L
 
    //Variables de tiempo para cambio de estado
-long intervaloPaso1 = (500/pulsos);
-long intervaloPaso2;
-long intervaloPaso3;
-long intervaloPaso4;
-unsigned long previusmsPaso1 = 0;
-unsigned long previusmsPaso2 = 0;
-unsigned long previusmsPaso3 = 0;
-unsigned long previusmsPaso4 = 0;
+long intervaloPaso = 0;
+unsigned long previusmsPaso = 0;
 
    //Salidas 
 const int j=4;
@@ -267,44 +262,46 @@ void paso4UP()
 
 void controladorEstds() //Función que controla el cambio de estado
 {
-  unsigned long currentMillis = millis();
+  //unsigned long currentMillis = millis();
   pulses=subida_pulse();
+  
+  intervaloPaso = (3000/pulses);
+
   
   if(estadoActual==Paso4){
     estadoActual=Paso0;
   }
   
   
-  if ((currentMillis-previusmsPaso1)>=intervaloPaso1   && (estadoActual==Paso0))
+  if ((millis()-previusmsPaso)>=intervaloPaso   && (estadoActual==Paso0))
   {
-    previusmsPaso1 = currentMillis;
+    previusmsPaso = millis();
     estadoActual = Paso1;
-    intervaloPaso2 = (500/pulses) + (intervaloPaso1);
+    Serial.println("estoy en el if 1");
    
   }
   
-  if (((currentMillis-previusmsPaso2)>=intervaloPaso2) && (estadoActual==Paso1))
+  if (((millis()-previusmsPaso)>=intervaloPaso) && (estadoActual==Paso1))
   {
-    previusmsPaso2 = currentMillis;
+    previusmsPaso = millis();
     estadoActual = Paso2;
-    intervaloPaso3 = (500/pulses) + (intervaloPaso2);
+    Serial.println("estoy en el if 2");
     
   }
   
-  if (((currentMillis-previusmsPaso3)>=intervaloPaso3) && (estadoActual==Paso2))
+  if (((millis()-previusmsPaso)>=intervaloPaso) && (estadoActual==Paso2))
   {
-    previusmsPaso3 = currentMillis;
+    previusmsPaso = millis();
     estadoActual = Paso3;
-    intervaloPaso4 = (500/pulses) + (intervaloPaso3);
+    Serial.println("estoy en el if 3");
     
   }
   
-  if (((currentMillis-previusmsPaso4)>=intervaloPaso4) && (estadoActual==Paso3))
+  if (((millis()-previusmsPaso)>=intervaloPaso) && (estadoActual==Paso3))
   {
-    previusmsPaso4 = currentMillis;
+    previusmsPaso = millis();
     estadoActual = Paso4;
-    intervaloPaso1 = (500/pulses) + (intervaloPaso4);
-    //Serial.println("paso4");
+    Serial.println("estoy en el if 4");
   }
 }
 
@@ -318,6 +315,7 @@ void cambioEstadosR() //Funcion que llama cada estado (Giro Derecha)
     paso1BI1();
     paso1BI2();
     Serial.println("paso1");
+    Serial.println(intervaloPaso);
     break;
     
     case Paso2:
@@ -325,6 +323,7 @@ void cambioEstadosR() //Funcion que llama cada estado (Giro Derecha)
     paso2BI1();
     paso2BI2();
     Serial.println("paso2");
+    Serial.println(intervaloPaso);
     break;
     
     case Paso3:
@@ -332,6 +331,7 @@ void cambioEstadosR() //Funcion que llama cada estado (Giro Derecha)
     paso3BI1();
     paso3BI2();
     Serial.println("paso3");
+    Serial.println(intervaloPaso);
     break; 
     
     case Paso4:
@@ -339,6 +339,7 @@ void cambioEstadosR() //Funcion que llama cada estado (Giro Derecha)
     paso4BI1();
     paso4BI2();
     Serial.println("paso4");
+    Serial.println(intervaloPaso);
     break;
     
     default:
@@ -356,28 +357,24 @@ void cambioEstadosL() //Funcion que llama cada estado (Giro Izquierda)
     paso4UP();
     paso4BI1();
     paso4BI2();
-    Serial.println("paso4");
     break;
     
     case Paso2:
     paso3UP();
     paso3BI1();
     paso3BI2();
-    Serial.println("paso3");
     break;
     
     case Paso3:
     paso2UP();
     paso2BI1();
     paso2BI2();
-    Serial.println("paso2");
     break; 
     
     case Paso4:
     paso1UP();
     paso1BI1();
     paso1BI2();
-    Serial.println("paso1");
     break;
     
     default:
@@ -390,46 +387,35 @@ void cambioEstadosL() //Funcion que llama cada estado (Giro Izquierda)
 
 int subida_pulse()
 {
-    val_up= entrada[4]; // lee el estado del Boton select si el boton esta presionado o no  y cambia el estado a encendido u apagado
+  val_up= entrada[4]; // lee el estado del Boton select si el boton esta presionado o no  y cambia el estado a encendido u apagado
   if ((val_up == HIGH) && (var_antup == LOW))
   {
     
     if(pulsos<20){
       pulsos=pulsos+1;
+      lcd.setCursor(12,1);
+      lcd.print(pulsos);
     }
-    
-    
   }
-    var_antup = val_up;  // vals es ahora viejo, vamos a almacenarlo
+  var_antup = val_up;  // vals es ahora viejo, vamos a almacenarlo
   
   val_down= entrada[3]; // lee el estado del Boton select si el boton esta presionado o no  y cambia el estado a encendido u apagado
   if ((val_down == HIGH) && (var_antdown == LOW))
   {
     
     if(pulsos>2){
-      pulsos=pulsos-1;     
-    }
-    
-    
-  }
-    var_antdown = val_down;
-
-  if(pulsos<10){
-
-    lcd.setCursor(13,1);
-    lcd.print(" ");
-
-    lcd.setCursor(12,1);
-    lcd.print(pulsos);
-
-
-    
-    }else{
+      pulsos=pulsos-1;
       lcd.setCursor(12,1);
       lcd.print(pulsos);
-      }
-
+      if(pulsos<10){
+        lcd.clear();
+        }
+    }
+  }
+  var_antdown = val_down;
+  
   return pulsos;
+  
 }
 
 void seleect()
